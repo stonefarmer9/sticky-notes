@@ -1,7 +1,7 @@
 import { MAX_NOTE_SIZE, MIN_NOTE_SIZE } from './constants';
 import type { Point, Rect, Size } from './types';
 
-// When max < min the minimum wins, so a rect larger than its container pins to the origin.
+// When max < min the minimum wins.
 export const clamp = (value: number, min: number, max: number): number =>
   Math.max(min, Math.min(value, max));
 
@@ -10,7 +10,8 @@ export const clampSize = (size: Size, max: Size = MAX_NOTE_SIZE): Size => ({
   height: clamp(size.height, MIN_NOTE_SIZE.height, max.height),
 });
 
-export const clampToBoard = (rect: Rect, board: Size): Rect => ({
+// A rect larger than the board pins to the origin. Generic so callers keep their own fields (e.g. Note).
+export const clampToBoard = <T extends Rect>(rect: T, board: Size): T => ({
   ...rect,
   x: clamp(rect.x, 0, board.width - rect.width),
   y: clamp(rect.y, 0, board.height - rect.height),
@@ -23,7 +24,7 @@ export const rectsIntersect = (a: Rect, b: Rect): boolean =>
   a.y < b.y + b.height &&
   b.y < a.y + a.height;
 
-export const centerOn = (center: Point, size: Size): Point => ({
+export const originCenteredOn = (center: Point, size: Size): Point => ({
   x: center.x - size.width / 2,
   y: center.y - size.height / 2,
 });

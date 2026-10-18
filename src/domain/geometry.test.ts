@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { MAX_NOTE_SIZE, MIN_NOTE_SIZE } from './constants';
-import { centerOn, clamp, clampSize, clampToBoard, rectsIntersect } from './geometry';
+import { clamp, clampSize, clampToBoard, originCenteredOn, rectsIntersect } from './geometry';
 import type { Rect, Size } from './types';
 
 const BOARD: Size = { width: 1000, height: 800 };
@@ -74,6 +74,12 @@ describe('clampToBoard', () => {
     expect(clamped.height).toBe(rect.height);
   });
 
+  it('preserves extra fields of the input type', () => {
+    const note: Rect & { readonly id: string } = { ...rect, id: 'a', x: -10 };
+
+    expect(clampToBoard(note, BOARD).id).toBe('a');
+  });
+
   it('pins a rect larger than the board to the origin', () => {
     const huge: Rect = { x: 50, y: 50, width: 2000, height: 2000 };
 
@@ -109,12 +115,18 @@ describe('rectsIntersect', () => {
   });
 });
 
-describe('centerOn', () => {
+describe('originCenteredOn', () => {
   it('returns the top-left corner that centers the size on the point', () => {
-    expect(centerOn({ x: 500, y: 400 }, { width: 200, height: 200 })).toEqual({ x: 400, y: 300 });
+    expect(originCenteredOn({ x: 500, y: 400 }, { width: 200, height: 200 })).toEqual({
+      x: 400,
+      y: 300,
+    });
   });
 
   it('can produce negative coordinates near the origin', () => {
-    expect(centerOn({ x: 0, y: 0 }, { width: 200, height: 100 })).toEqual({ x: -100, y: -50 });
+    expect(originCenteredOn({ x: 0, y: 0 }, { width: 200, height: 100 })).toEqual({
+      x: -100,
+      y: -50,
+    });
   });
 });
