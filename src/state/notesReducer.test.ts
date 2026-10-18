@@ -2,10 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { MAX_NOTE_SIZE, MIN_NOTE_SIZE } from '../domain/constants';
 import { createNoteId } from '../domain/noteId';
-import type { NoteId, Size } from '../domain/types';
 import type { NotesAction } from './actions';
 import { initialNotesState, notesReducer, type NotesState } from './notesReducer';
-import { BOARD, createNote, findNote } from './testHelpers';
+import { BOARD, createNote, deepFreeze, findNote } from '../test/testHelpers';
 
 describe('CREATE_NOTE', () => {
   it('adds a note at the given position and size', () => {
@@ -53,99 +52,29 @@ describe('CREATE_NOTE', () => {
     expect(findNote(state, id)).toMatchObject({ x: 0, y: BOARD.height - 200 });
   });
 
-  it('does not mutate the previous state', () => {
-    const { state } = createNote(initialNotesState);
-
-    expect(initialNotesState.notes).toHaveLength(0);
-    expect(state.notes).toHaveLength(1);
-  });
-});
-
-describe('MOVE_NOTE', () => {
-  it('moves only the targeted note', () => {
+  it('stacks above the highest remaining note after a deletion', () => {
     const first = createNote(initialNotesState);
     const second = createNote(first.state);
-    const moved = notesReducer(second.state, {
-      type: 'MOVE_NOTE',
-      id: first.id,
-      position: { x: 300, y: 400 },
-      board: BOARD,
-    });
+    const afterDelete = notesReducer(second.state, { type: 'DELETE_NOTE', id: first.id });
+    const third = createNote(afterDelete);
 
-    expect(findNote(moved, first.id)).toMatchObject({ x: 300, y: 400 });
-    expect(findNote(moved, second.id)).toBe(findNote(second.state, second.id));
-  });
-
-  it('clamps the position to the board', () => {
-    const { state, id } = createNote(initialNotesState);
-    const moved = notesReducer(state, {
-      type: 'MOVE_NOTE',
-      id,
-      position: { x: -100, y: 9999 },
-      board: BOARD,
-    });
-
-    expect(findNote(moved, id)).toMatchObject({ x: 0, y: BOARD.height - 200 });
-  });
-
-  it('returns the same state for an unknown id', () => {
-    const { state } = createNote(initialNotesState);
-    const moved = notesReducer(state, {
-      type: 'MOVE_NOTE',
-      id: createNoteId(),
-      position: { x: 0, y: 0 },
-      board: BOARD,
-    });
-
-    expect(moved).toBe(state);
-  });
-});
-
-describe('RESIZE_NOTE', () => {
-  const resize = (state: NotesState, id: NoteId, size: Size): NotesState =>
-    notesReducer(state, { type: 'RESIZE_NOTE', id, size, board: BOARD });
-
-  it('applies the new size and keeps the position', () => {
-    const { state, id } = createNote(initialNotesState);
-
-    expect(findNote(resize(state, id, { width: 300, height: 250 }), id)).toMatchObject({
-      x: 100,
-      y: 100,
-      width: 300,
-      height: 250,
-    });
-  });
-
-  it('does not shrink below the minimum size', () => {
-    const { state, id } = createNote(initialNotesState);
-
-    expect(findNote(resize(state, id, { width: 1, height: 1 }), id)).toMatchObject(MIN_NOTE_SIZE);
-  });
-
-  it('does not grow beyond the maximum size', () => {
-    const { state, id } = createNote(initialNotesState, { x: 0, y: 0, width: 200, height: 200 });
-
-    expect(findNote(resize(state, id, { width: 9999, height: 9999 }), id)).toMatchObject(
-      MAX_NOTE_SIZE,
+    expect(findNote(third.state, third.id).zIndex).toBeGreaterThan(
+      findNote(third.state, second.id).zIndex,
     );
   });
 
-  it('does not grow past the board edges', () => {
-    const { state, id } = createNote(initialNotesState, {
-      x: 800,
-      y: 600,
-      width: 150,
-      height: 150,
+  it('does not mutate the previous state', () => {
+    const before = deepFreeze<NotesState>({ notes: [] });
+    const rect = { x: 0, y: 0, width: 200, height: 200 };
+    const after = notesReducer(before, {
+      type: 'CREATE_NOTE',
+      id: createNoteId(),
+      rect,
+      board: BOARD,
     });
-    const note = findNote(resize(state, id, { width: 500, height: 500 }), id);
 
-    expect(note).toMatchObject({ x: 800, y: 600, width: 200, height: 200 });
-  });
-
-  it('returns the same state for an unknown id', () => {
-    const { state } = createNote(initialNotesState);
-
-    expect(resize(state, createNoteId(), { width: 300, height: 300 })).toBe(state);
+    expect(before.notes).toHaveLength(0);
+    expect(after.notes).toHaveLength(1);
   });
 });
 

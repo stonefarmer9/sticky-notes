@@ -136,9 +136,11 @@ describe('rectsIntersect', () => {
     expect(rectsIntersect(a, { x: 0, y: 200, width: 100, height: 100 })).toBe(false);
   });
 
-  it('returns false when rects only share an edge', () => {
+  it('returns false when rects only share an edge, on every side', () => {
     expect(rectsIntersect(a, { x: 100, y: 0, width: 100, height: 100 })).toBe(false);
+    expect(rectsIntersect(a, { x: -100, y: 0, width: 100, height: 100 })).toBe(false);
     expect(rectsIntersect(a, { x: 0, y: 100, width: 100, height: 100 })).toBe(false);
+    expect(rectsIntersect(a, { x: 0, y: -100, width: 100, height: 100 })).toBe(false);
   });
 });
 

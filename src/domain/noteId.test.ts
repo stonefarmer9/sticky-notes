@@ -3,11 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { createNoteId } from './noteId';
 
 describe('createNoteId', () => {
-  it('returns a non-empty string', () => {
-    const id = createNoteId();
-
-    expect(typeof id).toBe('string');
-    expect(id.length).toBeGreaterThan(0);
+  it('returns a UUID', () => {
+    expect(createNoteId()).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+    );
   });
 
   it('returns a different id on each call', () => {
