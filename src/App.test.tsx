@@ -1,12 +1,12 @@
-import { renderToStaticMarkup } from 'react-dom/server';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import App from './App';
 
 describe('App', () => {
   it('renders the Sticky Notes text', () => {
-    const markup = renderToStaticMarkup(<App />);
+    render(<App />);
 
-    expect(markup).toContain('Sticky Notes');
+    expect(screen.getByText('Sticky Notes')).toBeInTheDocument();
   });
 });

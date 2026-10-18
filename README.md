@@ -70,7 +70,7 @@ Target: desktop, minimum 1024×768, latest Chrome, Firefox and Edge. Note IDs us
 **Tooling**
 - Vite, React 19, TypeScript with `strict` and `noUncheckedIndexedAccess`, set in the project tsconfigs because options in the root tsconfig aren't inherited by project references.
 - oxlint with type-aware rules. Warnings fail the build, `any`, `@ts-ignore` and non-null assertions are errors, `switch` exhaustiveness is checked, and files are limited to 200 lines.
-- Vitest for tests. Component tests *(planned: libraries installed, jsdom config not wired yet)* use jsdom, `@testing-library/react`, `@testing-library/jest-dom` and `@testing-library/user-event`. user-event is included because it simplifies interaction tests such as double-click to create and typing. Drag and resize tests dispatch `PointerEvent`s with `fireEvent`, because user-event's pointer support in jsdom is limited.
+- Vitest for tests. Component tests run in jsdom (`src/test/setup.ts` registers the jest-dom matchers and cleanup) and use `@testing-library/react`, `@testing-library/jest-dom` and `@testing-library/user-event`. user-event is included because it simplifies interaction tests such as double-click to create and typing. Drag and resize tests dispatch `PointerEvent`s with `fireEvent`, because user-event's pointer support in jsdom is limited.
 - Prettier owns formatting (single quotes, semicolons, trailing commas, print width 100) and `format:check` is part of `verify`. Markdown, `Design/` and `.opencode/` are not formatted, so the README and PLAN conventions are kept.
 - Husky: pre-commit runs typecheck, lint and tests, and pre-push runs the full `verify`.
 - The only runtime dependencies are `react` and `react-dom`.
