@@ -10,6 +10,12 @@ export const clampSize = (size: Size, max: Size = MAX_NOTE_SIZE): Size => ({
   height: clamp(size.height, MIN_NOTE_SIZE.height, max.height),
 });
 
+// Largest note size that fits between `origin` and the board's far edges. May drop below the minimum.
+export const maxSizeWithin = (origin: Point, board: Size): Size => ({
+  width: Math.min(MAX_NOTE_SIZE.width, board.width - origin.x),
+  height: Math.min(MAX_NOTE_SIZE.height, board.height - origin.y),
+});
+
 // A rect larger than the board pins to the origin. Generic so callers keep their own fields (e.g. Note).
 export const clampToBoard = <T extends Rect>(rect: T, board: Size): T => ({
   ...rect,
