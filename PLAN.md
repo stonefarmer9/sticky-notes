@@ -4,7 +4,7 @@ Status file for agents. Read this at the start of every session.
 
 ## Current focus
 
-Rendering and test cleanup done. Next: create a note by double-click (`useCreateNote`), then `useDrag`.
+Rendering and test cleanup done. Create note done. Next: `useDrag` (move by dragging), then `useResize`.
 
 ## Milestones
 
@@ -12,7 +12,7 @@ Rendering and test cleanup done. Next: create a note by double-click (`useCreate
 - [x] Domain: `Note` types, constants, pure geometry functions + tests
 - [x] State: reducer with discriminated-union actions + tests
 - [x] Board and Note rendering
-- [ ] Create note (specified size and position)
+- [x] Create note (double-click, default size, centered on the pointer)
 - [ ] Move by dragging (`useDrag`). Also: grab cursor, `touch-action: none`, `user-select: none` while dragging, Escape cancel, `pointercancel`
 - [ ] Resize by dragging (`useResize`)
 - [ ] Delete by dragging over trash zone
@@ -45,6 +45,9 @@ Rendering and test cleanup done. Next: create a note by double-click (`useCreate
 
 - Tests are checked by mutation (break the code, a test must fail) before a milestone is ticked. Do not write tests for features that do not exist yet.
 - Board subscribes to the whole state; per-frame gesture updates must bypass the reducer (direct style updates), commit on pointerup.
+
+- Focusing a newly created note for text editing waits for the edit-text milestone; there is no editable field to focus yet.
+- Tests for pointer coordinates use `fireEvent` with a `stubBounds` helper because jsdom has no layout.
 
 <!-- One line each: what was decided and why. -->
 

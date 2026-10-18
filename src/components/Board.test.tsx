@@ -1,13 +1,13 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { MIN_BOARD_SIZE } from '../domain/constants';
 import type { NoteId } from '../domain/types';
 import { NotesProvider, useNotesDispatch } from '../state/NotesContext';
 import { initialNotesState, type NotesState } from '../state/notesReducer';
-import { createNote } from '../test/testHelpers';
+import { createNote, stubBounds } from '../test/testHelpers';
 import { Board } from './Board';
 
 const DeleteButton = ({ id }: { readonly id: NoteId }) => {
@@ -86,5 +86,67 @@ describe('Board', () => {
 
     expect(screen.getAllByRole('article')).toHaveLength(1);
     expect(remaining?.isConnected).toBe(true);
+  });
+
+  describe('double-click to create', () => {
+    const BOARD_BOUNDS = { x: 0, y: 0, width: 1000, height: 800 };
+
+    const renderMeasuredBoard = (state?: NotesState) => {
+      renderBoard(state);
+      const board = screen.getByRole('main');
+      stubBounds(board, BOARD_BOUNDS);
+      return board;
+    };
+
+    it('creates a default-size note centered on the pointer', () => {
+      const board = renderMeasuredBoard();
+
+      fireEvent.doubleClick(board, { clientX: 500, clientY: 400 });
+
+      expect(screen.getByRole('article')).toHaveStyle({
+        transform: 'translate3d(400px, 300px, 0)',
+        width: '200px',
+        height: '200px',
+      });
+    });
+
+    it('keeps a note created near the corner inside the board', () => {
+      const board = renderMeasuredBoard();
+
+      fireEvent.doubleClick(board, { clientX: 10, clientY: 10 });
+
+      expect(screen.getByRole('article')).toHaveStyle({ transform: 'translate3d(0px, 0px, 0)' });
+    });
+
+    it('stacks each new note above the previous one', () => {
+      const board = renderMeasuredBoard();
+
+      fireEvent.doubleClick(board, { clientX: 300, clientY: 300 });
+      fireEvent.doubleClick(board, { clientX: 600, clientY: 500 });
+      const [first, second] = screen.getAllByRole('article');
+
+      expect(first).toHaveStyle({ zIndex: '1' });
+      expect(second).toHaveStyle({ zIndex: '2' });
+    });
+
+    it('gives each created note its own id, so React sees no duplicate keys', () => {
+      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const board = renderMeasuredBoard();
+
+      fireEvent.doubleClick(board, { clientX: 300, clientY: 300 });
+      fireEvent.doubleClick(board, { clientX: 600, clientY: 500 });
+
+      expect(consoleError).not.toHaveBeenCalled();
+      consoleError.mockRestore();
+    });
+
+    it('does not create a note when an existing note is double-clicked', () => {
+      const { state } = createNote(initialNotesState);
+      renderMeasuredBoard(state);
+
+      fireEvent.doubleClick(screen.getByRole('article'));
+
+      expect(screen.getAllByRole('article')).toHaveLength(1);
+    });
   });
 });

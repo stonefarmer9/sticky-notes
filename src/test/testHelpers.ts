@@ -33,3 +33,9 @@ export const findNote = (state: NotesState, id: NoteId): Note => {
   }
   return note;
 };
+
+// jsdom has no layout, so getBoundingClientRect returns zeros unless an element is given bounds.
+export const stubBounds = (element: HTMLElement, bounds: Rect): void => {
+  element.getBoundingClientRect = () =>
+    new DOMRect(bounds.x, bounds.y, bounds.width, bounds.height);
+};
