@@ -13,6 +13,10 @@
 
 .note[data-dragging='true'] {
   cursor: grabbing;
+}
+
+.note[data-dragging='true'],
+.note[data-resizing='true'] {
   box-shadow: var(--note-shadow-dragging);
   user-select: none;
 }

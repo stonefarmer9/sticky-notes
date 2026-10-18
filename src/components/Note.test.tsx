@@ -16,7 +16,11 @@ const BASE_NOTE: NoteModel = {
   zIndex: 7,
 };
 
-const NO_OP_HANDLERS = { onBringToFront: () => undefined, onMove: () => undefined };
+const NO_OP_HANDLERS = {
+  onBringToFront: () => undefined,
+  onMove: () => undefined,
+  onResize: () => undefined,
+};
 
 describe('Note', () => {
   it('is positioned with a transform and sized from the model', () => {

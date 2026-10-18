@@ -1,14 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { MAX_NOTE_SIZE, MIN_NOTE_SIZE } from './constants';
-import {
-  clamp,
-  clampSize,
-  clampToBoard,
-  maxSizeWithin,
-  originCenteredOn,
-  rectsIntersect,
-} from './geometry';
+import { clamp, clampSize, clampToBoard, originCenteredOn, rectsIntersect } from './geometry';
 import type { Rect, Size } from './types';
 
 const BOARD: Size = { width: 1000, height: 800 };
@@ -53,26 +46,6 @@ describe('clampSize', () => {
     expect(clampSize({ width: 500, height: 500 }, { width: 10, height: 10 })).toEqual(
       MIN_NOTE_SIZE,
     );
-  });
-});
-
-describe('maxSizeWithin', () => {
-  it('is capped by the maximum note size far from the board edges', () => {
-    expect(maxSizeWithin({ x: 0, y: 0 }, BOARD)).toEqual(MAX_NOTE_SIZE);
-  });
-
-  it('is capped by the space left to the board edges', () => {
-    expect(maxSizeWithin({ x: BOARD.width - 250, y: BOARD.height - 150 }, BOARD)).toEqual({
-      width: 250,
-      height: 150,
-    });
-  });
-
-  it('can be smaller than the minimum when the origin is at the edge', () => {
-    expect(maxSizeWithin({ x: BOARD.width, y: BOARD.height }, BOARD)).toEqual({
-      width: 0,
-      height: 0,
-    });
   });
 });
 

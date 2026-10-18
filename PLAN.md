@@ -4,7 +4,7 @@ Status file for agents. Read this at the start of every session.
 
 ## Current focus
 
-Rendering and test cleanup done. Create, move and bring-to-front done. Next: `useResize` (single bottom-right handle), then the trash zone.
+Rendering and test cleanup done. Create, move, resize and bring-to-front done. Next: trash zone (`TrashZone`, hit test, highlight, delete on release).
 
 ## Milestones
 
@@ -14,7 +14,7 @@ Rendering and test cleanup done. Create, move and bring-to-front done. Next: `us
 - [x] Board and Note rendering
 - [x] Create note (double-click, default size, centered on the pointer)
 - [x] Move by dragging (`useDrag`), incl. grab cursor, `touch-action: none`, `user-select: none` while dragging, Escape cancel, `pointercancel`
-- [ ] Resize by dragging (`useResize`)
+- [x] Resize by dragging (`useResize`)
 - [ ] Delete by dragging over trash zone
 - [x] Bring to front (on pointer down)
 - [ ] Edit text. Also: focus model (`tabIndex`, keyboard), editing must not start a drag, focus new note on create
@@ -52,6 +52,9 @@ Rendering and test cleanup done. Create, move and bring-to-front done. Next: `us
 - `useDrag` keeps the gesture in a ref and writes `transform` directly once per frame; it commits `MOVE_NOTE` once on pointerup and skips the commit when the position did not change. Note receives stable callbacks from Board, so it stays presentational.
 - Bring to front happens on pointer down (not on pointer up), so a press alone raises a note.
 - Trash feedback will need a per-frame callback from `useDrag` (position while dragging); add it when the trash milestone needs it, not before.
+
+- Drag and resize share `usePointerGesture`; wrappers differ only in `compute` (delta to rect) and the attribute they set. Cancel restores `style.cssText`.
+- `resizeWithinBoard` (geometry) is used by both the reducer and the live resize preview so they cannot disagree.
 
 <!-- One line each: what was decided and why. -->
 

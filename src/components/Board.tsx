@@ -25,6 +25,10 @@ export const Board = () => {
       dispatch({ type: 'MOVE_NOTE', id, position, board }),
     [dispatch],
   );
+  const handleResize = useCallback(
+    (id: NoteId, size: Size, board: Size) => dispatch({ type: 'RESIZE_NOTE', id, size, board }),
+    [dispatch],
+  );
   const { onDoubleClick } = useCreateNote({ onCreate: handleCreate });
 
   return (
@@ -35,7 +39,13 @@ export const Board = () => {
       onDoubleClick={onDoubleClick}
     >
       {notes.map((note) => (
-        <Note key={note.id} note={note} onBringToFront={handleBringToFront} onMove={handleMove} />
+        <Note
+          key={note.id}
+          note={note}
+          onBringToFront={handleBringToFront}
+          onMove={handleMove}
+          onResize={handleResize}
+        />
       ))}
     </main>
   );

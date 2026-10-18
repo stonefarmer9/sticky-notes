@@ -23,6 +23,10 @@ export const clampToBoard = <T extends Rect>(rect: T, board: Size): T => ({
   y: clamp(rect.y, 0, board.height - rect.height),
 });
 
+// Applies a requested size to a rect: within min/max and the board edge, shifting the rect back if needed.
+export const resizeWithinBoard = <T extends Rect>(rect: T, size: Size, board: Size): T =>
+  clampToBoard({ ...rect, ...clampSize(size, maxSizeWithin(rect, board)) }, board);
+
 // Rects that only share an edge do not intersect.
 export const rectsIntersect = (a: Rect, b: Rect): boolean =>
   a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;

@@ -1,4 +1,4 @@
-import { clampSize, clampToBoard, maxSizeWithin } from '../domain/geometry';
+import { clampSize, clampToBoard, maxSizeWithin, resizeWithinBoard } from '../domain/geometry';
 import type { Note, NoteId } from '../domain/types';
 import type { NotesAction } from './actions';
 
@@ -45,10 +45,7 @@ export const notesReducer = (state: NotesState, action: NotesAction): NotesState
 
     case 'RESIZE_NOTE':
       return updateNote(state, action.id, (note) =>
-        clampToBoard(
-          { ...note, ...clampSize(action.size, maxSizeWithin(note, action.board)) },
-          action.board,
-        ),
+        resizeWithinBoard(note, action.size, action.board),
       );
 
     case 'DELETE_NOTE': {
