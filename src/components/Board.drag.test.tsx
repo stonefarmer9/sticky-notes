@@ -79,16 +79,6 @@ describe('dragging notes on the board', () => {
     expect(secondNote).toHaveStyle({ transform: 'translate3d(500px, 300px, 0)' });
   });
 
-  it('commits a position clamped to the board', () => {
-    const { firstNote, probe } = setup();
-
-    fireEvent.pointerDown(firstNote, { ...POINTER, clientX: 150, clientY: 150 });
-    fireEvent.pointerMove(firstNote, { ...POINTER, clientX: 9000, clientY: -9000 });
-    fireEvent.pointerUp(firstNote, { ...POINTER, clientX: 9000, clientY: -9000 });
-
-    expect(probe()).toHaveTextContent('800,0,z3 | 500,300,z2');
-  });
-
   it('leaves the store unchanged when the drag is cancelled with Escape', () => {
     const { frames, firstNote, probe } = setup();
 

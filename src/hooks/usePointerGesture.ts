@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, type PointerEvent as ReactPointerEvent } from 'react';
 
 import type { Point, Rect, Size } from '../domain/types';
-import { applyRect } from '../styles/applyRect';
+import { applyRect } from './applyRect';
 
 export interface PointerGestureOptions {
   readonly rect: Rect;

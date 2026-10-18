@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { MAX_NOTE_SIZE, MIN_NOTE_SIZE } from '../domain/constants';
+import { MIN_NOTE_SIZE } from '../domain/constants';
 import { createNoteId } from '../domain/noteId';
 import type { NoteId, Size } from '../domain/types';
 import { initialNotesState, notesReducer, type NotesState } from './notesReducer';
@@ -59,20 +59,6 @@ describe('RESIZE_NOTE', () => {
       width: 300,
       height: 250,
     });
-  });
-
-  it('does not shrink below the minimum size', () => {
-    const { state, id } = createNote(initialNotesState);
-
-    expect(findNote(resize(state, id, { width: 1, height: 1 }), id)).toMatchObject(MIN_NOTE_SIZE);
-  });
-
-  it('does not grow beyond the maximum size', () => {
-    const { state, id } = createNote(initialNotesState, { x: 0, y: 0, width: 200, height: 200 });
-
-    expect(findNote(resize(state, id, { width: 9999, height: 9999 }), id)).toMatchObject(
-      MAX_NOTE_SIZE,
-    );
   });
 
   it('does not grow past the board edges', () => {

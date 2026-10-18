@@ -2,9 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { MAX_NOTE_SIZE, MIN_NOTE_SIZE } from './constants';
 import { maxSizeWithin, resizeWithinBoard } from './geometry';
-import type { Rect, Size } from './types';
-
-const BOARD: Size = { width: 1000, height: 800 };
+import { BOARD } from '../test/testHelpers';
+import type { Rect } from './types';
 
 describe('maxSizeWithin', () => {
   it('is capped by the maximum note size far from the board edges', () => {

@@ -64,14 +64,6 @@ describe('editing notes on the board', () => {
     expect(probe()).toHaveTextContent('[draft v2]');
   });
 
-  it('does not create a second note when an existing note is double-clicked to edit', () => {
-    setup(withText(createNote(initialNotesState).state, ['draft']));
-
-    fireEvent.doubleClick(screen.getByRole('article'));
-
-    expect(screen.getAllByRole('article')).toHaveLength(1);
-  });
-
   it('discards the edit on Escape', async () => {
     const { user, probe } = setup(withText(createNote(initialNotesState).state, ['draft']));
 

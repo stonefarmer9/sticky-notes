@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import { TRASH_ZONE_SIZE } from './constants';
+import { BOARD } from '../test/testHelpers';
 import { isOverTrash, trashRect } from './geometry';
 import type { Rect, Size } from './types';
 
-const BOARD: Size = { width: 1000, height: 800 };
 const NOTE_SIZE: Size = { width: 200, height: 200 };
 
 describe('trashRect', () => {

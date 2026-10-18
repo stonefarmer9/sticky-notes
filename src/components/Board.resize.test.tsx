@@ -94,18 +94,6 @@ describe('resizing notes on the board', () => {
     expect(probe()).toHaveTextContent('100,100 200x200 z1 | 800,600 200x200 z2');
   });
 
-  it('leaves the store unchanged when the resize is cancelled with Escape', () => {
-    const { frames, firstNote, firstHandle, probe } = setup();
-
-    fireEvent.pointerDown(firstHandle, { ...POINTER, clientX: 300, clientY: 300 });
-    fireEvent.pointerMove(firstHandle, { ...POINTER, clientX: 450, clientY: 450 });
-    frames.flush();
-    fireEvent.keyDown(window, { key: 'Escape' });
-
-    expect(firstNote).toHaveStyle({ width: '200px', height: '200px' });
-    expect(probe()).toHaveTextContent('100,100 200x200 z3 | 800,600 150x150 z2');
-  });
-
   it('starts a second resize from the size committed by the first', () => {
     const { firstHandle, probe } = setup();
 

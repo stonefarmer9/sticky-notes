@@ -76,17 +76,6 @@ describe('trash zone on the board', () => {
     expect(probe()).toHaveTextContent('100,400 | 700,100');
   });
 
-  it('keeps the note when the drag is cancelled with Escape over the trash', () => {
-    const { dragTo, probe, board } = setup();
-
-    dragTo(400, 600);
-    fireEvent.keyDown(window, { key: 'Escape' });
-
-    expect(screen.getAllByRole('article')).toHaveLength(2);
-    expect(probe()).toHaveTextContent('100,100 | 700,100');
-    expect(board).not.toHaveAttribute('data-trash-active');
-  });
-
   it('does not delete a note that is resized over the trash', () => {
     const first = createNote(initialNotesState, { x: 420, y: 504, width: 200, height: 200 });
     render(

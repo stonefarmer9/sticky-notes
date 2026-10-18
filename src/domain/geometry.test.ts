@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import { MAX_NOTE_SIZE, MIN_NOTE_SIZE } from './constants';
+import { BOARD } from '../test/testHelpers';
 import { clamp, clampSize, clampToBoard, originCenteredOn, rectsIntersect } from './geometry';
 import type { Rect, Size } from './types';
-
-const BOARD: Size = { width: 1000, height: 800 };
 
 describe('clamp', () => {
   it('returns the value when within range', () => {

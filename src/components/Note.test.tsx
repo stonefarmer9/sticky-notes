@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 
 import { DEFAULT_NOTE_COLOR } from '../domain/constants';
 import { createNoteId } from '../domain/noteId';
-import { NOTE_COLORS, type Note as NoteModel } from '../domain/types';
+import { NOTE_COLOURS } from '../domain/constants';
+import type { Note as NoteModel } from '../domain/types';
 import { NOTE_COLOR_VALUES } from '../styles/noteColors';
 import { createNoteActions } from '../test/testHelpers';
 import { Note } from './Note';
@@ -46,7 +47,7 @@ describe('Note', () => {
     });
   });
 
-  it.each(NOTE_COLORS)('renders the %s color', (color) => {
+  it.each(NOTE_COLOURS)('renders the %s color', (color) => {
     renderNote({ ...BASE_NOTE, color });
 
     expect(screen.getByRole('article')).toHaveStyle({

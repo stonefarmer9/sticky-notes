@@ -1,5 +1,5 @@
 import type { Rect } from '../domain/types';
-import { toTranslate3d } from './transform';
+import { toTranslate3d } from '../styles/transform';
 
 export const applyRect = (element: HTMLElement, rect: Rect): void => {
   element.style.transform = toTranslate3d(rect);

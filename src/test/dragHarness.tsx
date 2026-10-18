@@ -1,14 +1,15 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
-import type { Rect, Size } from '../domain/types';
+import type { Rect } from '../domain/types';
 import { useDrag } from '../hooks/useDrag';
 import { useResize } from '../hooks/useResize';
 import { toTranslate3d } from '../styles/transform';
-import { installManualFrames, stubBounds } from './testHelpers';
+import { BOARD, installManualFrames, stubBounds } from './testHelpers';
+
+export { BOARD };
 
 export const NOTE: Rect = { x: 100, y: 100, width: 200, height: 200 };
-export const BOARD: Size = { width: 1000, height: 800 };
 export const START_TRANSFORM = toTranslate3d(NOTE);
 export const POINTER = { pointerId: 1, isPrimary: true, button: 0 };
 
