@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest';
 
 import { DEFAULT_NOTE_COLOR } from '../domain/constants';
 import { createNoteId } from '../domain/noteId';
-import type { Note as NoteModel } from '../domain/types';
+import { NOTE_COLORS, type Note as NoteModel } from '../domain/types';
+import { NOTE_COLOR_VALUES } from '../styles/noteColors';
 import { Note } from './Note';
 
 const BASE_NOTE: NoteModel = {
@@ -36,12 +37,22 @@ describe('Note', () => {
   it('uses the default color when none is set', () => {
     render(<Note note={BASE_NOTE} />);
 
-    expect(screen.getByRole('article')).toHaveAttribute('data-color', DEFAULT_NOTE_COLOR);
+    expect(screen.getByRole('article')).toHaveStyle({
+      backgroundColor: NOTE_COLOR_VALUES[DEFAULT_NOTE_COLOR],
+    });
   });
 
-  it('uses the note color when set', () => {
-    render(<Note note={{ ...BASE_NOTE, color: 'pink' }} />);
+  it.each(NOTE_COLORS)('renders the %s color', (color) => {
+    render(<Note note={{ ...BASE_NOTE, color }} />);
 
-    expect(screen.getByRole('article')).toHaveAttribute('data-color', 'pink');
+    expect(screen.getByRole('article')).toHaveStyle({
+      backgroundColor: NOTE_COLOR_VALUES[color],
+    });
+  });
+
+  it('has an accessible name', () => {
+    render(<Note note={BASE_NOTE} />);
+
+    expect(screen.getByRole('article', { name: 'Sticky note' })).toBeInTheDocument();
   });
 });

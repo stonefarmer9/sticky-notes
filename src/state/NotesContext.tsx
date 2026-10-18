@@ -9,6 +9,7 @@ const NotesStateContext = createContext<NotesState | null>(null);
 const NotesDispatchContext = createContext<Dispatch<NotesAction> | null>(null);
 
 interface NotesProviderProps {
+  // Read once on mount; later changes to this prop are ignored.
   readonly initialState?: NotesState;
   readonly children: ReactNode;
 }

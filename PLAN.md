@@ -4,7 +4,7 @@ Status file for agents. Read this at the start of every session.
 
 ## Current focus
 
-Rendering done. Next: create a note by double-click (`useCreateNote`), then `useDrag`.
+Rendering and test cleanup done. Next: create a note by double-click (`useCreateNote`), then `useDrag`.
 
 ## Milestones
 
@@ -13,11 +13,11 @@ Rendering done. Next: create a note by double-click (`useCreateNote`), then `use
 - [x] State: reducer with discriminated-union actions + tests
 - [x] Board and Note rendering
 - [ ] Create note (specified size and position)
-- [ ] Move by dragging (`useDrag`)
+- [ ] Move by dragging (`useDrag`). Also: grab cursor, `touch-action: none`, `user-select: none` while dragging, Escape cancel, `pointercancel`
 - [ ] Resize by dragging (`useResize`)
 - [ ] Delete by dragging over trash zone
 - [ ] Bring to front
-- [ ] Edit text
+- [ ] Edit text. Also: focus model (`tabIndex`, keyboard), editing must not start a drag, focus new note on create
 - [ ] localStorage persistence via `NotesRepository`
 - [ ] Note colors
 - [ ] Mock async REST repository
@@ -41,7 +41,10 @@ Rendering done. Next: create a note by double-click (`useCreateNote`), then `use
 - Creation is double-click only, at the default 200×200; there is no size input. Every note is resizable by dragging a single bottom-right corner handle.
 - The board fills the window with a 1024×768 minimum; its size is read at interaction time and not stored in state.
 - Prettier owns formatting (single quotes, semicolons, trailing commas, width 100). `format:check` is part of `verify`. Markdown, `Design/` and `.opencode/` are ignored so README and PLAN conventions are not rewritten.
-- Notes are positioned with `transform: translate3d` and stacked with CSS `z-index`, so bringing to front never reorders the DOM; colors use a `data-color` attribute mapped to CSS custom properties.
+- Notes are positioned with `transform: translate3d` and stacked with CSS `z-index`, so bringing to front never reorders the DOM; colors come from a typed `Record<NoteColor, string>` in `styles/noteColors.ts`.
+
+- Tests are checked by mutation (break the code, a test must fail) before a milestone is ticked. Do not write tests for features that do not exist yet.
+- Board subscribes to the whole state; per-frame gesture updates must bypass the reducer (direct style updates), commit on pointerup.
 
 <!-- One line each: what was decided and why. -->
 
