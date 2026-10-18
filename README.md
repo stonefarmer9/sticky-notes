@@ -2,7 +2,7 @@
 
 A single-page sticky notes board built with React and TypeScript. Create, move, resize and delete notes entirely with hand-written Pointer Event logic. There are no UI kits, drag-and-drop libraries or state libraries.
 
-> **Status:** work in progress. The domain model, geometry, reducer, state contexts and static board and note rendering are implemented and tested. Creating notes by double-click, moving them by dragging and resizing them by their corner handle and deleting them by dragging onto the trash zone work. Sections marked *(planned)* describe the intended design.
+> **Status:** work in progress. The domain model, geometry, reducer, state contexts and static board and note rendering are implemented and tested. Creating notes by double-click, moving them by dragging and resizing them by their corner handle deleting them by dragging onto the trash zone and editing their text work. Sections marked *(planned)* describe the intended design.
 
 ## Getting started
 
@@ -31,11 +31,12 @@ Target: desktop, minimum 1024×768, latest Chrome, Firefox and Edge. Note IDs us
 | Resize a note by dragging | done (bottom-right corner handle) |
 | Delete a note by dragging it over a trash zone | done (highlight while hovering, delete on release) |
 | Bring to front on press | done |
-| Edit text, localStorage, colors, mocked REST save | planned |
+| Edit note text (double-click, or Enter on a focused note) | done |
+| localStorage, colors, mocked REST save | planned |
 
 ## Architecture
 
-**State and data flow.** All note state lives in a single `useReducer` with a discriminated-union action type (`CREATE_NOTE`, `MOVE_NOTE`, `RESIZE_NOTE`, `DELETE_NOTE`, `BRING_TO_FRONT`). The reducer is pure and has no DOM knowledge: callers generate note IDs, and actions that depend on layout carry the board size so the reducer can clamp positions and sizes through the pure functions in `domain/geometry`. It returns the same state object when nothing changes, so React can skip re-renders. State and dispatch are exposed through two separate contexts, so components that only dispatch don't re-render when the notes change.
+**State and data flow.** All note state lives in a single `useReducer` with a discriminated-union action type (`CREATE_NOTE`, `MOVE_NOTE`, `RESIZE_NOTE`, `DELETE_NOTE`, `BRING_TO_FRONT`, `UPDATE_TEXT`). The reducer is pure and has no DOM knowledge: callers generate note IDs, and actions that depend on layout carry the board size so the reducer can clamp positions and sizes through the pure functions in `domain/geometry`. It returns the same state object when nothing changes, so React can skip re-renders. State and dispatch are exposed through two separate contexts, so components that only dispatch don't re-render when the notes change.
 
 **Interactions and performance.** Drag, resize and double-click creation each live in their own custom hook. Creation (`useCreateNote`) is implemented: it takes an `onCreate` callback, reads the board's bounds once per double-click and doesn't touch global state; `Board` supplies the callback, which generates the id and dispatches `CREATE_NOTE`. Dragging (`useDrag`) and resizing (`useResize`) are implemented as thin wrappers over one shared core, `usePointerGesture`, built on Pointer Events: `setPointerCapture`, `pointermove`, `pointerup`, `pointercancel` and `lostpointercapture`. Each wrapper only says how a pointer delta turns into a new rect. The gesture lives in a ref. On pointer down the board's bounds are read once, and each `pointermove` only records the clamped position. Once per animation frame the note's `transform: translate3d(...)` is written directly to the element, so React does not render during a drag. The result is committed to the reducer once on `pointerup`, and the note is also brought to front on `pointerdown` (for both drag and resize). Memoized notes keep the other notes from re-rendering; this is *(planned)* to be proven by a render-count test. Trash hit-testing uses `rectsIntersect` through `isOverTrash`. While a note is dragged, each frame toggles a `data-trash-active` attribute on the board, and CSS styles both the trash zone and the dragged note from it, so hovering the trash costs no React renders. Escape, `pointercancel` and lost pointer capture restore the previous position and never leave a drag stuck.
 
@@ -78,7 +79,12 @@ Target: desktop, minimum 1024×768, latest Chrome, Firefox and Edge. Note IDs us
 - Double-clicking the empty board creates a note centered on the pointer. The hook reports the unclamped rect and the board size, and the reducer clamps it, so a click near an edge still yields a note fully on the board.
 - Double-clicks that start on a note are ignored (`event.target` must be the board itself).
 - The board's bounds are read once per double-click, never in a move handler.
-- Focusing the new note for text editing *(planned)* arrives with the edit-text milestone.
+- A note created by double-click opens straight in edit mode with its text field focused.
+- Editing: double-clicking a note, or pressing Enter on a focused note (notes have `tabIndex=0`), swaps its text for a textarea (`NoteEditor`). Blur saves; Escape discards and returns focus to the note; Enter inserts a new line. Only one note is edited at a time, and `Board` owns which one (`editingId`), so only that note re-renders when editing starts or stops.
+- Pressing inside the textarea stops propagation of `pointerdown`, so selecting text can never start a drag. Double-clicking the resize handle does not start editing either.
+- The editor settles exactly once: Escape followed by the blur some browsers fire when a focused field is removed does not save the discarded text.
+- `UPDATE_TEXT` returns the same state when the text is unchanged, and the note only dispatches it when the text actually changed. An emptied note keeps `text: ''`.
+- `Note` receives its callbacks as one stable `NoteActions` object built once by `Board`, instead of a prop per callback.
 - Resizing: each note has a single bottom-right `ResizeHandle`. `useResize` puts its handlers on the handle and resizes the note that contains it. Pressing the handle stops propagation, so it never also starts a drag.
 - `usePointerGesture` restores `style.cssText` on cancel, so any property a gesture wrote is undone without per-gesture bookkeeping. `applyRect` writes `transform`, `width` and `height` for both gestures.
 - `resizeWithinBoard` in `domain/geometry` is the single definition of how a requested size is limited (min, max, board edge, shifting back inside). The reducer uses it, and `useResize` uses it for the live preview, so preview and commit cannot disagree.

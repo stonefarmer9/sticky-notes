@@ -11,6 +11,11 @@
   touch-action: none;
 }
 
+.note:focus-visible,
+.note:focus-within {
+  outline: 2px solid var(--focus-color);
+}
+
 .note[data-dragging='true'] {
   cursor: grabbing;
 }

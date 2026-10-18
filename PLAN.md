@@ -4,7 +4,7 @@ Status file for agents. Read this at the start of every session.
 
 ## Current focus
 
-Rendering and test cleanup done. All four required features done. Next: edit text, then localStorage persistence via `NotesRepository`.
+Rendering and test cleanup done. Required features and text editing done. Next: localStorage persistence via `NotesRepository` (async interface, debounced saves), then colors.
 
 ## Milestones
 
@@ -17,7 +17,7 @@ Rendering and test cleanup done. All four required features done. Next: edit tex
 - [x] Resize by dragging (`useResize`)
 - [x] Delete by dragging over trash zone
 - [x] Bring to front (on pointer down)
-- [ ] Edit text. Also: focus model (`tabIndex`, keyboard), editing must not start a drag, focus new note on create
+- [x] Edit text, incl. focus model (`tabIndex`, Enter to edit), editing never starts a drag, new note opens focused
 - [ ] localStorage persistence via `NotesRepository`
 - [ ] Note colors
 - [ ] Mock async REST repository
@@ -61,6 +61,9 @@ Rendering and test cleanup done. All four required features done. Next: edit tex
 
 - Jura is the app font via self-hosted `@fontsource/jura` (devDependency, bundled by Vite), chosen over a Google Fonts link so it works offline. Form controls do not inherit fonts by default, so the text editor must set `font: inherit`.
 - The "Double click to create a new note" hint is purely cosmetic and intentionally untested.
+
+- Edit mode is UI state owned by Board (`editingId`), not the reducer; the reducer only gets `UPDATE_TEXT`. Blur saves, Escape discards, Enter is a new line.
+- Note callbacks are grouped into one stable `NoteActions` object to keep Note's props small and its memo effective.
 
 <!-- One line each: what was decided and why. -->
 

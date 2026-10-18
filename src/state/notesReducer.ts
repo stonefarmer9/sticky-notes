@@ -60,6 +60,11 @@ export const notesReducer = (state: NotesState, action: NotesAction): NotesState
       );
     }
 
+    case 'UPDATE_TEXT':
+      return updateNote(state, action.id, (note) =>
+        note.text === action.text ? note : { ...note, text: action.text },
+      );
+
     default:
       return assertNever(action);
   }

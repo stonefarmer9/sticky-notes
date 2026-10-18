@@ -32,5 +32,16 @@ export interface BringToFrontAction {
   readonly id: NoteId;
 }
 
+export interface UpdateTextAction {
+  readonly type: 'UPDATE_TEXT';
+  readonly id: NoteId;
+  readonly text: string;
+}
+
 export type NotesAction =
-  CreateNoteAction | MoveNoteAction | ResizeNoteAction | DeleteNoteAction | BringToFrontAction;
+  | CreateNoteAction
+  | MoveNoteAction
+  | ResizeNoteAction
+  | DeleteNoteAction
+  | BringToFrontAction
+  | UpdateTextAction;

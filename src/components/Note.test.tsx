@@ -5,6 +5,7 @@ import { DEFAULT_NOTE_COLOR } from '../domain/constants';
 import { createNoteId } from '../domain/noteId';
 import { NOTE_COLORS, type Note as NoteModel } from '../domain/types';
 import { NOTE_COLOR_VALUES } from '../styles/noteColors';
+import { createNoteActions } from '../test/testHelpers';
 import { Note } from './Note';
 
 const BASE_NOTE: NoteModel = {
@@ -16,16 +17,12 @@ const BASE_NOTE: NoteModel = {
   zIndex: 7,
 };
 
-const NO_OP_HANDLERS = {
-  onBringToFront: () => undefined,
-  onMove: () => undefined,
-  onResize: () => undefined,
-  onDelete: () => undefined,
-};
+const renderNote = (note: NoteModel = BASE_NOTE) =>
+  render(<Note note={note} isEditing={false} actions={createNoteActions()} />);
 
 describe('Note', () => {
   it('is positioned with a transform and sized from the model', () => {
-    render(<Note note={BASE_NOTE} {...NO_OP_HANDLERS} />);
+    renderNote();
 
     expect(screen.getByRole('article')).toHaveStyle({
       transform: 'translate3d(120px, 80px, 0)',
@@ -36,13 +33,13 @@ describe('Note', () => {
   });
 
   it('renders the text', () => {
-    render(<Note note={{ ...BASE_NOTE, text: 'Buy milk' }} {...NO_OP_HANDLERS} />);
+    renderNote({ ...BASE_NOTE, text: 'Buy milk' });
 
     expect(screen.getByText('Buy milk')).toBeInTheDocument();
   });
 
   it('uses the default color when none is set', () => {
-    render(<Note note={BASE_NOTE} {...NO_OP_HANDLERS} />);
+    renderNote();
 
     expect(screen.getByRole('article')).toHaveStyle({
       backgroundColor: NOTE_COLOR_VALUES[DEFAULT_NOTE_COLOR],
@@ -50,16 +47,16 @@ describe('Note', () => {
   });
 
   it.each(NOTE_COLORS)('renders the %s color', (color) => {
-    render(<Note note={{ ...BASE_NOTE, color }} {...NO_OP_HANDLERS} />);
+    renderNote({ ...BASE_NOTE, color });
 
     expect(screen.getByRole('article')).toHaveStyle({
       backgroundColor: NOTE_COLOR_VALUES[color],
     });
   });
 
-  it('has an accessible name', () => {
-    render(<Note note={BASE_NOTE} {...NO_OP_HANDLERS} />);
+  it('has an accessible name and can take focus', () => {
+    renderNote();
 
-    expect(screen.getByRole('article', { name: 'Sticky note' })).toBeInTheDocument();
+    expect(screen.getByRole('article', { name: 'Sticky note' })).toHaveAttribute('tabindex', '0');
   });
 });

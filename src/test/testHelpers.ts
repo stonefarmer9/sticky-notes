@@ -64,3 +64,13 @@ export const installManualFrames = () => {
     },
   };
 };
+
+export const createNoteActions = () => ({
+  bringToFront: vi.fn(),
+  move: vi.fn(),
+  resize: vi.fn(),
+  remove: vi.fn(),
+  startEditing: vi.fn(),
+  stopEditing: vi.fn(),
+  updateText: vi.fn(),
+});
