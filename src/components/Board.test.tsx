@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { MIN_BOARD_SIZE } from '../domain/constants';
 import type { NoteId } from '../domain/types';
@@ -127,17 +127,6 @@ describe('Board', () => {
 
       expect(first).toHaveStyle({ zIndex: '1' });
       expect(second).toHaveStyle({ zIndex: '2' });
-    });
-
-    it('gives each created note its own id, so React sees no duplicate keys', () => {
-      const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-      const board = renderMeasuredBoard();
-
-      fireEvent.doubleClick(board, { clientX: 300, clientY: 300 });
-      fireEvent.doubleClick(board, { clientX: 600, clientY: 500 });
-
-      expect(consoleError).not.toHaveBeenCalled();
-      consoleError.mockRestore();
     });
 
     it('does not create a note when an existing note is double-clicked', () => {

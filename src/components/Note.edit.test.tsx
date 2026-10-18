@@ -85,7 +85,7 @@ describe('Note editing: leaving edit mode', () => {
     expect(actions.stopEditing).toHaveBeenCalledOnce();
   });
 
-  it('treats a note without text as an empty string', async () => {
+  it('does not save when a note without text is left unchanged', async () => {
     const { actions, user } = setup(true, { ...NOTE, text: undefined });
 
     await user.tab();

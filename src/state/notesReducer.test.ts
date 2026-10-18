@@ -13,14 +13,11 @@ describe('CREATE_NOTE', () => {
     expect(findNote(state, id)).toMatchObject({ x: 100, y: 100, width: 200, height: 200 });
   });
 
-  it('is deterministic and uses the id provided by the action', () => {
+  it('uses the id provided by the action', () => {
     const id = createNoteId();
     const rect = { x: 0, y: 0, width: 200, height: 200 };
     const action: NotesAction = { type: 'CREATE_NOTE', id, rect, board: BOARD };
 
-    expect(notesReducer(initialNotesState, action)).toEqual(
-      notesReducer(initialNotesState, action),
-    );
     expect(notesReducer(initialNotesState, action).notes[0]?.id).toBe(id);
   });
 

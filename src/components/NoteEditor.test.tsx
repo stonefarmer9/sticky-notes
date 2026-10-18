@@ -47,7 +47,7 @@ describe('NoteEditor', () => {
     expect(onCommit).not.toHaveBeenCalled();
   });
 
-  it('ignores other keys', async () => {
+  it('commits on blur when focus moves with Tab and does not cancel', async () => {
     const { onCommit, onCancel } = setup();
 
     await userEvent.keyboard('abc{Tab}');

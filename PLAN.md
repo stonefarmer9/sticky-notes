@@ -21,7 +21,7 @@ Rendering and test cleanup done. Required features and text editing done. Next: 
 - [ ] localStorage persistence via `NotesRepository`
 - [ ] Note colors
 - [ ] Mock async REST repository
-- [ ] Performance test: moving one note does not re-render the others
+- [x] Performance test: moving one note does not re-render the others
 - [ ] README final pass: build instructions + architecture (2-3 paragraphs), drop the *(planned)* markers
 
 ## Decisions

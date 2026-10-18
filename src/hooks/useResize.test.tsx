@@ -105,4 +105,33 @@ describe('useResize', () => {
     expect(note.style.width).toBe(`${NOTE.width}px`);
     expect(onEnd).not.toHaveBeenCalled();
   });
+  it('restores the original size when pointer capture is lost, without committing', () => {
+    const { handle, note, press, move, frames, onEnd } = setup();
+
+    press();
+    move(100, 100);
+    frames.flush();
+    expect(note.style.width).toBe('300px');
+    fireEvent.lostPointerCapture(handle, POINTER);
+
+    expect(note.style.width).toBe(`${NOTE.width}px`);
+    expect(note.style.height).toBe(`${NOTE.height}px`);
+    expect(note).not.toHaveAttribute('data-resizing');
+    expect(onEnd).not.toHaveBeenCalled();
+  });
+
+  it('ignores a pointercancel from a different pointer', () => {
+    const { handle, note, press, move, release, frames, onEnd } = setup();
+
+    press();
+    move(100, 100);
+    frames.flush();
+    fireEvent.pointerCancel(handle, { ...POINTER, pointerId: 2 });
+
+    expect(note).toHaveAttribute('data-resizing', 'true');
+    expect(note.style.width).toBe('300px');
+
+    release(100, 100);
+    expect(onEnd).toHaveBeenCalledExactlyOnceWith({ width: 300, height: 300 }, BOARD);
+  });
 });

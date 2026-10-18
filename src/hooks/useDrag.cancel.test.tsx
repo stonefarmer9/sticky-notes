@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { toTranslate3d } from '../styles/transform';
@@ -107,26 +107,33 @@ describe('useDrag cancellation and teardown', () => {
     expect(onEnd).not.toHaveBeenCalled();
   });
 
-  it('removes the Escape listener when the drag ends', () => {
-    const remove = vi.spyOn(window, 'removeEventListener');
-    const { press, release } = setup();
+  it('ignores Escape after the drag has ended', () => {
+    const { note, press, move, release, onStart, onEnd } = setup();
 
-    press();
-    release();
+    press(150, 150);
+    move(250, 250);
+    release(250, 250);
+    const committedTransform = note.style.transform;
+    fireEvent.keyDown(window, { key: 'Escape' });
 
-    expect(remove).toHaveBeenCalledWith('keydown', expect.any(Function));
+    expect(note.style.transform).toBe(committedTransform);
+    expect(note.style.transform).toBe(toTranslate3d({ x: 200, y: 200 }));
+    expect(onStart).toHaveBeenCalledOnce();
+    expect(onEnd).toHaveBeenCalledOnce();
   });
 
   it('tears down an active drag when unmounted', () => {
-    const remove = vi.spyOn(window, 'removeEventListener');
-    const { press, unmount, frames, onEnd } = setup();
+    const { note, press, unmount, frames, onStart, onEnd } = setup();
 
     press(150, 150);
-    fireEvent.pointerMove(screen.getByRole('article'), { ...POINTER, clientX: 300, clientY: 300 });
+    fireEvent.pointerMove(note, { ...POINTER, clientX: 300, clientY: 300 });
+    expect(frames.pending()).toBe(1);
     unmount();
 
-    expect(remove).toHaveBeenCalledWith('keydown', expect.any(Function));
     expect(frames.pending()).toBe(0);
+    expect(() => fireEvent.keyDown(window, { key: 'Escape' })).not.toThrow();
+    expect(onStart).toHaveBeenCalledOnce();
     expect(onEnd).not.toHaveBeenCalled();
+    expect(note).not.toHaveAttribute('data-dragging');
   });
 });
