@@ -126,4 +126,9 @@ Before finishing any task, run `npm run typecheck`, `npm run lint`, and `npm tes
 - At the start of every session, read `PLAN.md`. Work on the current focus unless told otherwise.
 - Tick a milestone only after `npm run verify` passes for that work. Never tick something that is partly done.
 - Keep `PLAN.md` short. Update "Current focus", record non-obvious decisions as one line each, and list blockers. Do not log a history of what you did.
-- Only the main agent edits `PLAN.md`. Subagents do not touch it.
+- Only the main agent edits `PLAN.md` and `README.md`. Subagents do not touch them.
+- Keep `README.md` in step with the code. Before ticking a milestone, update the README in the same change:
+  - add each non-obvious technical decision the milestone produced to "Technical decisions", one line each;
+  - update the feature status table;
+  - remove the *(planned)* marker from anything that is now implemented, and keep the Architecture section (2-3 paragraphs) consistent with the actual code.
+- Do not describe anything in the README that is not implemented, other than clearly marked *(planned)* items. A milestone is not done if the README contradicts the code.
