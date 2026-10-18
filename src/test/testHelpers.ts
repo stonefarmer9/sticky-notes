@@ -1,3 +1,5 @@
+import { vi } from 'vitest';
+
 import { createNoteId } from '../domain/noteId';
 import type { Note, NoteId, Rect, Size } from '../domain/types';
 import { notesReducer, type NotesState } from '../state/notesReducer';
@@ -38,4 +40,27 @@ export const findNote = (state: NotesState, id: NoteId): Note => {
 export const stubBounds = (element: HTMLElement, bounds: Rect): void => {
   element.getBoundingClientRect = () =>
     new DOMRect(bounds.x, bounds.y, bounds.width, bounds.height);
+};
+
+// Replaces requestAnimationFrame so tests decide when a frame runs.
+export const installManualFrames = () => {
+  const queue = new Map<number, FrameRequestCallback>();
+  let nextId = 1;
+  vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+    const id = nextId;
+    nextId += 1;
+    queue.set(id, callback);
+    return id;
+  });
+  vi.stubGlobal('cancelAnimationFrame', (id: number) => {
+    queue.delete(id);
+  });
+  return {
+    pending: () => queue.size,
+    flush: () => {
+      const callbacks = [...queue.values()];
+      queue.clear();
+      callbacks.forEach((callback) => callback(0));
+    },
+  };
 };

@@ -4,7 +4,7 @@ Status file for agents. Read this at the start of every session.
 
 ## Current focus
 
-Rendering and test cleanup done. Create note done. Next: `useDrag` (move by dragging), then `useResize`.
+Rendering and test cleanup done. Create, move and bring-to-front done. Next: `useResize` (single bottom-right handle), then the trash zone.
 
 ## Milestones
 
@@ -13,10 +13,10 @@ Rendering and test cleanup done. Create note done. Next: `useDrag` (move by drag
 - [x] State: reducer with discriminated-union actions + tests
 - [x] Board and Note rendering
 - [x] Create note (double-click, default size, centered on the pointer)
-- [ ] Move by dragging (`useDrag`). Also: grab cursor, `touch-action: none`, `user-select: none` while dragging, Escape cancel, `pointercancel`
+- [x] Move by dragging (`useDrag`), incl. grab cursor, `touch-action: none`, `user-select: none` while dragging, Escape cancel, `pointercancel`
 - [ ] Resize by dragging (`useResize`)
 - [ ] Delete by dragging over trash zone
-- [ ] Bring to front
+- [x] Bring to front (on pointer down)
 - [ ] Edit text. Also: focus model (`tabIndex`, keyboard), editing must not start a drag, focus new note on create
 - [ ] localStorage persistence via `NotesRepository`
 - [ ] Note colors
@@ -48,6 +48,10 @@ Rendering and test cleanup done. Create note done. Next: `useDrag` (move by drag
 
 - Focusing a newly created note for text editing waits for the edit-text milestone; there is no editable field to focus yet.
 - Tests for pointer coordinates use `fireEvent` with a `stubBounds` helper because jsdom has no layout.
+
+- `useDrag` keeps the gesture in a ref and writes `transform` directly once per frame; it commits `MOVE_NOTE` once on pointerup and skips the commit when the position did not change. Note receives stable callbacks from Board, so it stays presentational.
+- Bring to front happens on pointer down (not on pointer up), so a press alone raises a note.
+- Trash feedback will need a per-frame callback from `useDrag` (position while dragging); add it when the trash milestone needs it, not before.
 
 <!-- One line each: what was decided and why. -->
 

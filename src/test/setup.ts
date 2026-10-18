@@ -1,5 +1,13 @@
 import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
+import { afterEach, vi } from 'vitest';
 
-afterEach(cleanup);
+// jsdom does not implement pointer capture.
+Element.prototype.setPointerCapture = () => undefined;
+Element.prototype.releasePointerCapture = () => undefined;
+Element.prototype.hasPointerCapture = () => false;
+
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});

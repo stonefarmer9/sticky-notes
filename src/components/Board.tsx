@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { MIN_BOARD_SIZE } from '../domain/constants';
 import { createNoteId } from '../domain/noteId';
-import type { Rect, Size } from '../domain/types';
+import type { NoteId, Point, Rect, Size } from '../domain/types';
 import { useCreateNote } from '../hooks/useCreateNote';
 import { useNotesDispatch, useNotesState } from '../state/NotesContext';
 import styles from './Board.module.css';
@@ -16,6 +16,15 @@ export const Board = () => {
     (rect: Rect, board: Size) => dispatch({ type: 'CREATE_NOTE', id: createNoteId(), rect, board }),
     [dispatch],
   );
+  const handleBringToFront = useCallback(
+    (id: NoteId) => dispatch({ type: 'BRING_TO_FRONT', id }),
+    [dispatch],
+  );
+  const handleMove = useCallback(
+    (id: NoteId, position: Point, board: Size) =>
+      dispatch({ type: 'MOVE_NOTE', id, position, board }),
+    [dispatch],
+  );
   const { onDoubleClick } = useCreateNote({ onCreate: handleCreate });
 
   return (
@@ -26,7 +35,7 @@ export const Board = () => {
       onDoubleClick={onDoubleClick}
     >
       {notes.map((note) => (
-        <Note key={note.id} note={note} />
+        <Note key={note.id} note={note} onBringToFront={handleBringToFront} onMove={handleMove} />
       ))}
     </main>
   );

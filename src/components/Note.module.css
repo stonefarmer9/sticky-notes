@@ -7,6 +7,14 @@
   overflow: hidden;
   border-radius: 2px;
   box-shadow: var(--note-shadow);
+  cursor: grab;
+  touch-action: none;
+}
+
+.note[data-dragging='true'] {
+  cursor: grabbing;
+  box-shadow: var(--note-shadow-dragging);
+  user-select: none;
 }
 
 .text {
