@@ -1,4 +1,4 @@
-import { MAX_NOTE_SIZE, MIN_NOTE_SIZE } from './constants';
+import { MAX_NOTE_SIZE, MIN_NOTE_SIZE, TRASH_ZONE_SIZE } from './constants';
 import type { Point, Rect, Size } from './types';
 
 // When max < min the minimum wins.
@@ -35,3 +35,13 @@ export const originCenteredOn = (center: Point, size: Size): Point => ({
   x: center.x - size.width / 2,
   y: center.y - size.height / 2,
 });
+
+// The trash sits centered on the bottom edge of the board; TrashZone.module.css must match.
+export const trashRect = (board: Size): Rect => ({
+  x: (board.width - TRASH_ZONE_SIZE.width) / 2,
+  y: board.height - TRASH_ZONE_SIZE.height,
+  ...TRASH_ZONE_SIZE,
+});
+
+export const isOverTrash = (rect: Rect, board: Size): boolean =>
+  rectsIntersect(rect, trashRect(board));

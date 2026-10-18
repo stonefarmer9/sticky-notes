@@ -1,0 +1,28 @@
+.trash {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: var(--z-trash);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  color: var(--trash-color);
+  text-align: center;
+  pointer-events: none;
+  background: rgb(220 38 38 / 0.06);
+  border: 2px dashed var(--trash-color);
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+  opacity: 0.7;
+  transform: translateX(-50%);
+  transition:
+    background-color 120ms,
+    opacity 120ms;
+}
+
+:global([data-trash-active]) .trash {
+  font-weight: 600;
+  background: rgb(220 38 38 / 0.28);
+  opacity: 1;
+}

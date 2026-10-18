@@ -20,6 +20,7 @@ const NO_OP_HANDLERS = {
   onBringToFront: () => undefined,
   onMove: () => undefined,
   onResize: () => undefined,
+  onDelete: () => undefined,
 };
 
 describe('Note', () => {

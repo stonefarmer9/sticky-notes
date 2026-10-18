@@ -10,6 +10,11 @@ export interface PointerGestureOptions {
   // Element whose style the gesture writes. Defaults to the element receiving the pointer events.
   readonly targetOf?: (eventElement: HTMLElement) => HTMLElement | null;
   readonly compute: (start: Rect, delta: Point, board: Size) => Rect;
+  // Presence of this attribute on the board mirrors `test` once per frame and is cleared when the gesture ends.
+  readonly boardFlag?: {
+    readonly attribute: string;
+    readonly test: (rect: Rect, board: Size) => boolean;
+  };
   readonly onStart: () => void;
   readonly onEnd: (rect: Rect, board: Size) => void;
 }
@@ -18,6 +23,8 @@ interface Gesture {
   readonly pointerId: number;
   readonly captureElement: HTMLElement;
   readonly target: HTMLElement;
+  readonly boardElement: HTMLElement;
+  readonly boardFlag: PointerGestureOptions['boardFlag'];
   readonly attribute: string;
   readonly startPointer: Point;
   readonly startRect: Rect;
@@ -53,6 +60,9 @@ export const usePointerGesture = (options: PointerGestureOptions) => {
     }
     window.removeEventListener('keydown', gesture.onKeyDown);
     gesture.target.removeAttribute(gesture.attribute);
+    if (gesture.boardFlag !== undefined) {
+      gesture.boardElement.removeAttribute(gesture.boardFlag.attribute);
+    }
     if (gesture.captureElement.hasPointerCapture(gesture.pointerId)) {
       gesture.captureElement.releasePointerCapture(gesture.pointerId);
     }
@@ -70,7 +80,7 @@ export const usePointerGesture = (options: PointerGestureOptions) => {
   const onPointerDown = useCallback(
     (event: ReactPointerEvent<HTMLElement>) => {
       const captureElement = event.currentTarget;
-      const { rect, activeAttribute, targetOf, onStart } = optionsRef.current;
+      const { rect, activeAttribute, targetOf, boardFlag, onStart } = optionsRef.current;
       const target = targetOf === undefined ? captureElement : targetOf(captureElement);
       const boardElement = target?.parentElement;
       if (
@@ -94,6 +104,8 @@ export const usePointerGesture = (options: PointerGestureOptions) => {
         pointerId: event.pointerId,
         captureElement,
         target,
+        boardElement,
+        boardFlag,
         attribute: activeAttribute,
         startPointer: { x: event.clientX, y: event.clientY },
         startRect: rect,
@@ -125,6 +137,13 @@ export const usePointerGesture = (options: PointerGestureOptions) => {
       gesture.frame = requestAnimationFrame(() => {
         gesture.frame = null;
         applyRect(gesture.target, gesture.latest);
+        const { boardFlag } = gesture;
+        if (boardFlag !== undefined) {
+          gesture.boardElement.toggleAttribute(
+            boardFlag.attribute,
+            boardFlag.test(gesture.latest, gesture.board),
+          );
+        }
       });
     }
   }, []);

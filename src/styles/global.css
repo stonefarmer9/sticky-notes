@@ -3,6 +3,8 @@
   --note-shadow: 0 2px 6px rgb(0 0 0 / 0.2);
   --note-shadow-dragging: 0 8px 18px rgb(0 0 0 / 0.3);
   --text-color: #2b2b2b;
+  --trash-color: #b91c1c;
+  --z-trash: 2147483647;
 
   font-family: system-ui, sans-serif;
   color: var(--text-color);

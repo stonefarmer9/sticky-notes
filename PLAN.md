@@ -4,7 +4,7 @@ Status file for agents. Read this at the start of every session.
 
 ## Current focus
 
-Rendering and test cleanup done. Create, move, resize and bring-to-front done. Next: trash zone (`TrashZone`, hit test, highlight, delete on release).
+Rendering and test cleanup done. All four required features done. Next: edit text, then localStorage persistence via `NotesRepository`.
 
 ## Milestones
 
@@ -15,7 +15,7 @@ Rendering and test cleanup done. Create, move, resize and bring-to-front done. N
 - [x] Create note (double-click, default size, centered on the pointer)
 - [x] Move by dragging (`useDrag`), incl. grab cursor, `touch-action: none`, `user-select: none` while dragging, Escape cancel, `pointercancel`
 - [x] Resize by dragging (`useResize`)
-- [ ] Delete by dragging over trash zone
+- [x] Delete by dragging over trash zone
 - [x] Bring to front (on pointer down)
 - [ ] Edit text. Also: focus model (`tabIndex`, keyboard), editing must not start a drag, focus new note on create
 - [ ] localStorage persistence via `NotesRepository`
@@ -55,6 +55,9 @@ Rendering and test cleanup done. Create, move, resize and bring-to-front done. N
 
 - Drag and resize share `usePointerGesture`; wrappers differ only in `compute` (delta to rect) and the attribute they set. Cancel restores `style.cssText`.
 - `resizeWithinBoard` (geometry) is used by both the reducer and the live resize preview so they cannot disagree.
+
+- Trash hit test is rectangle intersection (per AGENTS.md); the board gets a `data-trash-active` attribute per frame, set directly on the DOM, and CSS styles the trash and the dragged note from it. Delete is decided from the final rect on release.
+- Trash zone is `pointer-events: none` with a very high z-index token so it never blocks notes and always sits above them.
 
 <!-- One line each: what was decided and why. -->
 

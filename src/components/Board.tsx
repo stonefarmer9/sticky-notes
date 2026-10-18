@@ -7,6 +7,7 @@ import { useCreateNote } from '../hooks/useCreateNote';
 import { useNotesDispatch, useNotesState } from '../state/NotesContext';
 import styles from './Board.module.css';
 import { Note } from './Note';
+import { TrashZone } from './TrashZone';
 
 export const Board = () => {
   const { notes } = useNotesState();
@@ -29,6 +30,10 @@ export const Board = () => {
     (id: NoteId, size: Size, board: Size) => dispatch({ type: 'RESIZE_NOTE', id, size, board }),
     [dispatch],
   );
+  const handleDelete = useCallback(
+    (id: NoteId) => dispatch({ type: 'DELETE_NOTE', id }),
+    [dispatch],
+  );
   const { onDoubleClick } = useCreateNote({ onCreate: handleCreate });
 
   return (
@@ -45,8 +50,10 @@ export const Board = () => {
           onBringToFront={handleBringToFront}
           onMove={handleMove}
           onResize={handleResize}
+          onDelete={handleDelete}
         />
       ))}
+      <TrashZone />
     </main>
   );
 };

@@ -14,9 +14,16 @@ interface NoteProps {
   readonly onBringToFront: (id: NoteId) => void;
   readonly onMove: (id: NoteId, position: Point, board: Size) => void;
   readonly onResize: (id: NoteId, size: Size, board: Size) => void;
+  readonly onDelete: (id: NoteId) => void;
 }
 
-export const Note = memo(function Note({ note, onBringToFront, onMove, onResize }: NoteProps) {
+export const Note = memo(function Note({
+  note,
+  onBringToFront,
+  onMove,
+  onResize,
+  onDelete,
+}: NoteProps) {
   const handleStart = useCallback(() => onBringToFront(note.id), [onBringToFront, note.id]);
   const handleEnd = useCallback(
     (position: Point, board: Size) => onMove(note.id, position, board),
@@ -26,7 +33,13 @@ export const Note = memo(function Note({ note, onBringToFront, onMove, onResize 
     (size: Size, board: Size) => onResize(note.id, size, board),
     [onResize, note.id],
   );
-  const dragHandlers = useDrag({ rect: note, onStart: handleStart, onEnd: handleEnd });
+  const handleTrash = useCallback(() => onDelete(note.id), [onDelete, note.id]);
+  const dragHandlers = useDrag({
+    rect: note,
+    onStart: handleStart,
+    onEnd: handleEnd,
+    onTrash: handleTrash,
+  });
   const resizeHandlers = useResize({ rect: note, onStart: handleStart, onEnd: handleResizeEnd });
 
   return (

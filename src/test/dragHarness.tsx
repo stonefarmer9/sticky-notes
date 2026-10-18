@@ -16,8 +16,9 @@ export const setupDrag = () => {
   const frames = installManualFrames();
   const onStart = vi.fn();
   const onEnd = vi.fn();
+  const onTrash = vi.fn();
   const Harness = () => {
-    const drag = useDrag({ rect: NOTE, onStart, onEnd });
+    const drag = useDrag({ rect: NOTE, onStart, onEnd, onTrash });
     return (
       <div aria-label="board">
         <div role="article" aria-label="note" style={{ transform: START_TRANSFORM }} {...drag} />
@@ -37,8 +38,10 @@ export const setupDrag = () => {
     ...view,
     frames,
     note,
+    board: screen.getByLabelText('board'),
     onStart,
     onEnd,
+    onTrash,
     press: (clientX = 150, clientY = 150) =>
       fireEvent.pointerDown(note, { ...POINTER, clientX, clientY }),
     move: (clientX: number, clientY: number) =>

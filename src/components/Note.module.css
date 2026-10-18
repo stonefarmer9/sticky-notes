@@ -26,3 +26,8 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+:global([data-trash-active]) .note[data-dragging='true'] {
+  outline: 2px dashed var(--trash-color);
+  opacity: 0.55;
+}
