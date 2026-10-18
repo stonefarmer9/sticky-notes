@@ -33,8 +33,4 @@ export interface BringToFrontAction {
 }
 
 export type NotesAction =
-  | CreateNoteAction
-  | MoveNoteAction
-  | ResizeNoteAction
-  | DeleteNoteAction
-  | BringToFrontAction;
+  CreateNoteAction | MoveNoteAction | ResizeNoteAction | DeleteNoteAction | BringToFrontAction;

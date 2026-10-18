@@ -12,11 +12,7 @@ const topZIndex = (notes: readonly Note[]): number =>
   notes.reduce((top, note) => Math.max(top, note.zIndex), 0);
 
 // Returns the same state when nothing changes, so React skips the re-render.
-const updateNote = (
-  state: NotesState,
-  id: NoteId,
-  update: (note: Note) => Note,
-): NotesState => {
+const updateNote = (state: NotesState, id: NoteId, update: (note: Note) => Note): NotesState => {
   const index = state.notes.findIndex((note) => note.id === id);
   const note = state.notes[index];
   if (note === undefined) {

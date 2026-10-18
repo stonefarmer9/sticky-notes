@@ -19,7 +19,9 @@ describe('CREATE_NOTE', () => {
     const rect = { x: 0, y: 0, width: 200, height: 200 };
     const action: NotesAction = { type: 'CREATE_NOTE', id, rect, board: BOARD };
 
-    expect(notesReducer(initialNotesState, action)).toEqual(notesReducer(initialNotesState, action));
+    expect(notesReducer(initialNotesState, action)).toEqual(
+      notesReducer(initialNotesState, action),
+    );
     expect(notesReducer(initialNotesState, action).notes[0]?.id).toBe(id);
   });
 
@@ -41,7 +43,12 @@ describe('CREATE_NOTE', () => {
   });
 
   it('keeps the note inside the board', () => {
-    const { state, id } = createNote(initialNotesState, { x: -50, y: 5000, width: 200, height: 200 });
+    const { state, id } = createNote(initialNotesState, {
+      x: -50,
+      y: 5000,
+      width: 200,
+      height: 200,
+    });
 
     expect(findNote(state, id)).toMatchObject({ x: 0, y: BOARD.height - 200 });
   });
@@ -124,7 +131,12 @@ describe('RESIZE_NOTE', () => {
   });
 
   it('does not grow past the board edges', () => {
-    const { state, id } = createNote(initialNotesState, { x: 800, y: 600, width: 150, height: 150 });
+    const { state, id } = createNote(initialNotesState, {
+      x: 800,
+      y: 600,
+      width: 150,
+      height: 150,
+    });
     const note = findNote(resize(state, id, { width: 500, height: 500 }), id);
 
     expect(note).toMatchObject({ x: 800, y: 600, width: 200, height: 200 });

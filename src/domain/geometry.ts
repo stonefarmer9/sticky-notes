@@ -25,10 +25,7 @@ export const clampToBoard = <T extends Rect>(rect: T, board: Size): T => ({
 
 // Rects that only share an edge do not intersect.
 export const rectsIntersect = (a: Rect, b: Rect): boolean =>
-  a.x < b.x + b.width &&
-  b.x < a.x + a.width &&
-  a.y < b.y + b.height &&
-  b.y < a.y + a.height;
+  a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
 
 export const originCenteredOn = (center: Point, size: Size): Point => ({
   x: center.x - size.width / 2,
