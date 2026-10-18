@@ -4,14 +4,14 @@ Status file for agents. Read this at the start of every session.
 
 ## Current focus
 
-Domain, reducer and Prettier done. Next: jsdom config in `vite.config.ts` plus setup file, `NotesContext`, then Board and Note rendering.
+Rendering done. Next: create a note by double-click (`useCreateNote`), then `useDrag`.
 
 ## Milestones
 
 - [x] Scaffold (Vite, React, TS strict), oxlint, Vitest, hooks, `verify` script
 - [x] Domain: `Note` types, constants, pure geometry functions + tests
 - [x] State: reducer with discriminated-union actions + tests
-- [ ] Board and Note rendering
+- [x] Board and Note rendering
 - [ ] Create note (specified size and position)
 - [ ] Move by dragging (`useDrag`)
 - [ ] Resize by dragging (`useResize`)
@@ -41,6 +41,7 @@ Domain, reducer and Prettier done. Next: jsdom config in `vite.config.ts` plus s
 - Creation is double-click only, at the default 200×200; there is no size input. Every note is resizable by dragging a single bottom-right corner handle.
 - The board fills the window with a 1024×768 minimum; its size is read at interaction time and not stored in state.
 - Prettier owns formatting (single quotes, semicolons, trailing commas, width 100). `format:check` is part of `verify`. Markdown, `Design/` and `.opencode/` are ignored so README and PLAN conventions are not rewritten.
+- Notes are positioned with `transform: translate3d` and stacked with CSS `z-index`, so bringing to front never reorders the DOM; colors use a `data-color` attribute mapped to CSS custom properties.
 
 <!-- One line each: what was decided and why. -->
 

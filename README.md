@@ -2,7 +2,7 @@
 
 A single-page sticky notes board built with React and TypeScript. Create, move, resize and delete notes entirely with hand-written Pointer Event logic. There are no UI kits, drag-and-drop libraries or state libraries.
 
-> **Status:** work in progress. The domain model, geometry and reducer are implemented and tested. The UI and interaction layers are not built yet. Sections marked *(planned)* describe the intended design.
+> **Status:** work in progress. The domain model, geometry, reducer, state contexts and static board and note rendering are implemented and tested. The interaction layers (create, move, resize, trash) are not built yet. Sections marked *(planned)* describe the intended design.
 
 ## Getting started
 
@@ -25,6 +25,7 @@ Target: desktop, minimum 1024×768, latest Chrome, Firefox and Edge. Note IDs us
 
 | Feature | Status |
 |---|---|
+| Render notes on a board (position, size, stacking, color) | done |
 | Create a note at a given size and position | reducer done, UI planned |
 | Move a note by dragging | reducer done, UI planned |
 | Resize a note by dragging | reducer done, UI planned |
@@ -33,9 +34,9 @@ Target: desktop, minimum 1024×768, latest Chrome, Firefox and Edge. Note IDs us
 
 ## Architecture
 
-**State and data flow.** All note state lives in a single `useReducer` with a discriminated-union action type (`CREATE_NOTE`, `MOVE_NOTE`, `RESIZE_NOTE`, `DELETE_NOTE`, `BRING_TO_FRONT`). The reducer is pure and has no DOM knowledge: callers generate note IDs, and actions that depend on layout carry the board size so the reducer can clamp positions and sizes through the pure functions in `domain/geometry`. It returns the same state object when nothing changes, so React can skip re-renders. State and dispatch will be exposed through two separate contexts so components that only dispatch don't re-render on state changes *(planned)*.
+**State and data flow.** All note state lives in a single `useReducer` with a discriminated-union action type (`CREATE_NOTE`, `MOVE_NOTE`, `RESIZE_NOTE`, `DELETE_NOTE`, `BRING_TO_FRONT`). The reducer is pure and has no DOM knowledge: callers generate note IDs, and actions that depend on layout carry the board size so the reducer can clamp positions and sizes through the pure functions in `domain/geometry`. It returns the same state object when nothing changes, so React can skip re-renders. State and dispatch are exposed through two separate contexts, so components that only dispatch don't re-render when the notes change.
 
-**Interactions and performance** *(planned)*. Drag, resize and create-by-drag will each live in their own custom hook built on Pointer Events (`setPointerCapture`, `pointermove`, `pointerup`, `pointercancel`). The hooks take callbacks and don't touch global state. During a gesture the note is moved with `transform: translate3d(...)` updated once per animation frame, using a board rect cached at gesture start, and the result is committed to the reducer once on `pointerup`. Only the note being manipulated re-renders. Trash hit-testing uses `rectsIntersect`. Escape and `pointercancel` restore the previous position.
+**Interactions and performance** *(planned)*. Drag, resize and double-click creation will each live in their own custom hook built on Pointer Events (`setPointerCapture`, `pointermove`, `pointerup`, `pointercancel`). The hooks take callbacks and don't touch global state. During a gesture the note is moved with `transform: translate3d(...)` updated once per animation frame, using a board rect cached at gesture start, and the result is committed to the reducer once on `pointerup`. Only the note being manipulated re-renders. Trash hit-testing uses `rectsIntersect`. Escape and `pointercancel` restore the previous position.
 
 **Persistence and API** *(planned)*. Persistence will sit behind a small `NotesRepository` interface with async `load()` and `save()`. There will be a localStorage implementation and a mocked REST implementation that returns Promises with simulated latency. The UI depends only on the interface, and saves are debounced.
 
@@ -60,6 +61,14 @@ Target: desktop, minimum 1024×768, latest Chrome, Firefox and Edge. Note IDs us
 - Unknown ids, a note already on top, and no-op deletes return the same state reference.
 - The default case of the `switch` calls `assertNever`, so adding an action without handling it fails at compile time.
 - Resize can't grow past the board edge or the maximum size, and can't shrink below the minimum.
+
+**Rendering**
+- Notes are absolutely positioned at the board origin and placed with `transform: translate3d(x, y, 0)`, so the drag step can update the same property per frame without layout work.
+- Stacking uses CSS `z-index`, so DOM order stays creation order and bringing a note to front never reorders or remounts elements.
+- `Note` is wrapped in `React.memo` and receives the immutable note object. The reducer keeps untouched notes referentially equal, so only a changed note re-renders.
+- Colors are a `data-color` attribute mapped to CSS custom property tokens in `styles/global.css`; the default is yellow.
+- The board fills the window and applies `MIN_BOARD_SIZE` (1024×768) inline from the constant, so the number lives in one place.
+- `NotesProvider` accepts an optional initial state, which tests use to seed notes and persistence will use to restore them.
 
 **Interaction** *(planned)*
 - Double-clicking the board creates a note centered on the pointer, clamped to the board and focused for text editing.
