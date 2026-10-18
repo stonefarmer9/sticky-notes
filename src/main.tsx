@@ -1,6 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
+import '@fontsource/jura/400.css';
+import '@fontsource/jura/600.css';
 import './styles/global.css';
 
 const rootElement = document.getElementById('root');

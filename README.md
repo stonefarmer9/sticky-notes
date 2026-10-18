@@ -68,6 +68,8 @@ Target: desktop, minimum 1024×768, latest Chrome, Firefox and Edge. Note IDs us
 - Stacking uses CSS `z-index`, so DOM order stays creation order and bringing a note to front never reorders or remounts elements.
 - `Note` is wrapped in `React.memo` and receives the immutable note object. The reducer keeps untouched notes referentially equal, so only a changed note re-renders.
 - Colors come from `NOTE_COLOR_VALUES`, a `Record<NoteColor, string>` in `styles/noteColors.ts`, applied as an inline background. Adding a color to `NOTE_COLORS` without a value is a compile error. The default is yellow.
+- The board shows a large light-gray hint, "Double click to create a new note", in the top-left. It is decorative (`aria-hidden`), sits behind notes, and has `pointer-events: none` so a double-click on it still reaches the board. jsdom has no layout, so that last part is checked in a browser, not in tests.
+- The app font is Jura, self-hosted through `@fontsource/jura` (weights 400 and 600, imported in `main.tsx`) with `system-ui` as the fallback. It is a dev dependency because Vite bundles the font files at build time; the only runtime dependencies stay `react` and `react-dom`.
 - Each note is an `<article>` with an accessible name, a grab cursor, `touch-action: none`, and while dragging a `data-dragging` attribute (grabbing cursor, no text selection, stronger shadow) set directly on the element.
 - The board fills the window and applies `MIN_BOARD_SIZE` (1024×768) inline from the constant, so the number lives in one place.
 - `NotesProvider` accepts an optional initial state, which tests use to seed notes and persistence will use to restore them.

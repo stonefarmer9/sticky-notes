@@ -5,3 +5,15 @@
   overflow: hidden;
   background: var(--board-background);
 }
+
+.hint {
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 24px 32px;
+  font-size: 2.5rem;
+  color: var(--hint-color);
+  pointer-events: none;
+  user-select: none;
+}

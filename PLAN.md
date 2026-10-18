@@ -59,6 +59,9 @@ Rendering and test cleanup done. All four required features done. Next: edit tex
 - Trash hit test is rectangle intersection (per AGENTS.md); the board gets a `data-trash-active` attribute per frame, set directly on the DOM, and CSS styles the trash and the dragged note from it. Delete is decided from the final rect on release.
 - Trash zone is `pointer-events: none` with a very high z-index token so it never blocks notes and always sits above them.
 
+- Jura is the app font via self-hosted `@fontsource/jura` (devDependency, bundled by Vite), chosen over a Google Fonts link so it works offline. Form controls do not inherit fonts by default, so the text editor must set `font: inherit`.
+- The "Double click to create a new note" hint is purely cosmetic and intentionally untested.
+
 <!-- One line each: what was decided and why. -->
 
 ## Open questions / blockers

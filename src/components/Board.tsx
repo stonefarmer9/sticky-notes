@@ -43,6 +43,9 @@ export const Board = () => {
       style={{ minWidth: MIN_BOARD_SIZE.width, minHeight: MIN_BOARD_SIZE.height }}
       onDoubleClick={onDoubleClick}
     >
+      <p className={styles.hint} aria-hidden="true">
+        Double click to create a new note
+      </p>
       {notes.map((note) => (
         <Note
           key={note.id}
