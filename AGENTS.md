@@ -102,11 +102,16 @@ npm run dev        # start dev server
 npm run build      # type-check and production build
 npm run preview    # serve production build
 npm run lint
-npm run typecheck  # tsc --noEmit
+npm run typecheck  # tsc -b
+npm run format     # prettier --write
+npm run format:check
 npm test
+npm run verify     # typecheck, lint, format:check, test, build
 ```
 
-Before finishing any task, run `npm run typecheck`, `npm run lint`, and `npm test`. Do not report work as done if any of them fail.
+Formatting is owned by Prettier (`.prettierrc.json`). Never hand-format: run `npm run format` on the files you changed. Markdown files are not formatted by Prettier.
+
+Before finishing any task, run `npm run verify`. Do not report work as done if it fails.
 
 ## Deliverables
 

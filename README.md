@@ -13,8 +13,10 @@ npm run build      # type-check and production build
 npm run preview    # serve the production build
 npm run lint       # oxlint (type-aware, warnings are errors)
 npm run typecheck  # tsc -b
+npm run format     # prettier --write
+npm run format:check
 npm test           # vitest run
-npm run verify     # typecheck, lint, test and build
+npm run verify     # typecheck, lint, format:check, test and build
 ```
 
 Target: desktop, minimum 1024×768, latest Chrome, Firefox and Edge. Note IDs use `crypto.randomUUID()`, which needs HTTPS or `localhost`.
@@ -61,11 +63,15 @@ Target: desktop, minimum 1024×768, latest Chrome, Firefox and Edge. Note IDs us
 
 **Interaction** *(planned)*
 - Double-clicking the board creates a note centered on the pointer, clamped to the board and focused for text editing.
+- New notes always use the default size (200×200). There is no size input.
+- Every note is resized by dragging a single handle in its bottom-right corner.
+- The board fills the window with a 1024×768 minimum. Its size is read when an interaction starts and is not kept in state.
 
 **Tooling**
 - Vite, React 19, TypeScript with `strict` and `noUncheckedIndexedAccess`, set in the project tsconfigs because options in the root tsconfig aren't inherited by project references.
 - oxlint with type-aware rules. Warnings fail the build, `any`, `@ts-ignore` and non-null assertions are errors, `switch` exhaustiveness is checked, and files are limited to 200 lines.
 - Vitest for tests. Component tests *(planned: libraries installed, jsdom config not wired yet)* use jsdom, `@testing-library/react`, `@testing-library/jest-dom` and `@testing-library/user-event`. user-event is included because it simplifies interaction tests such as double-click to create and typing. Drag and resize tests dispatch `PointerEvent`s with `fireEvent`, because user-event's pointer support in jsdom is limited.
+- Prettier owns formatting (single quotes, semicolons, trailing commas, print width 100) and `format:check` is part of `verify`. Markdown, `Design/` and `.opencode/` are not formatted, so the README and PLAN conventions are kept.
 - Husky: pre-commit runs typecheck, lint and tests, and pre-push runs the full `verify`.
 - The only runtime dependencies are `react` and `react-dom`.
 
