@@ -80,7 +80,7 @@ Target: desktop, minimum 1024×768, latest Chrome, Firefox and Edge. Note IDs us
 - Resizing: each note has a single bottom-right `ResizeHandle`. `useResize` puts its handlers on the handle and resizes the note that contains it. Pressing the handle stops propagation, so it never also starts a drag.
 - `usePointerGesture` restores `style.cssText` on cancel, so any property a gesture wrote is undone without per-gesture bookkeeping. `applyRect` writes `transform`, `width` and `height` for both gestures.
 - `resizeWithinBoard` in `domain/geometry` is the single definition of how a requested size is limited (min, max, board edge, shifting back inside). The reducer uses it, and `useResize` uses it for the live preview, so preview and commit cannot disagree.
-- Gestures: the hook ignores non-primary buttons and pointers, and a second pointer while a drag is active. It reads the latest `rect`, `onStart` and `onEnd` through a ref, so its handlers stay stable. The drag position is clamped with `clampToBoard` and the reducer clamps again on commit. A drag that ends where it started commits nothing.
+- Gestures: the hook ignores non-primary buttons and pointers, and a second pointer while a gesture is active. It reads the latest `rect`, `onStart` and `onEnd` through a ref, so its handlers stay stable. The live rect uses the same geometry functions as the reducer (`clampToBoard`, `resizeWithinBoard`), and the reducer clamps again on commit. A gesture that ends where it started commits nothing.
 - The element's parent must be the board: the hook reads the parent's bounds once at pointer down.
 - Escape is a `keydown` listener on `window` that exists only while a drag is active.
 - Unmounting during a drag tears the gesture down (listener, pending frame, capture).
